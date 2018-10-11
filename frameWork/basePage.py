@@ -1,7 +1,9 @@
 # __author__ = 'Yang'
 
 from selenium import webdriver
+from selenium.webdriver.support.select import Select
 import time
+
 
 class AutomateDriver(object):
     """
@@ -17,7 +19,7 @@ class AutomateDriver(object):
 
     def clear_cookies(self):
         """
-        清楚驱动初始化后的所有cookies
+        清除驱动初始化后的所有cookies
         """
         self.driver.delete_all_cookies()
 
@@ -36,7 +38,8 @@ class AutomateDriver(object):
     def close_browser(self):
         self.driver.close()
 
-    def sleep(self, seconds):
+    @staticmethod
+    def sleep(seconds):
         time.sleep(seconds)
 
     def get_element(self, selector):
@@ -60,15 +63,15 @@ class AutomateDriver(object):
             element = self.driver.find_element_by_xpath(selector_value)
         elif 'n' in selector_by or selector_by == 'name':
             element = self.driver.find_element_by_name(selector_value)
-        elif 'c' in selector_by or selector_by == 'class':
+        elif 'c' in selector_by or selector_by == 'class_name':
             element = self.driver.find_element_by_class_name(selector_value)
         elif 's' in selector_by or selector_by == 'css_selector':
             element = self.driver.find_element_by_css_selector(selector_value)
-        elif 't' in selector_by or selector_by == 'tag':
+        elif 't' in selector_by or selector_by == 'tag_name':
             element = self.driver.find_element_by_tag_name(selector_value)
-        elif 'l' in selector_by or selector_by == 'link':
+        elif 'l' in selector_by or selector_by == 'link_text':
             element = self.driver.find_element_by_link_text(selector_value)
-        elif 'p' in selector_by or selector_by == 'partial':
+        elif 'p' in selector_by or selector_by == 'partial_link_text':
             element = self.driver.find_element_by_partial_link_text(selector_value)
         else:
             raise NameError('请输入有效的元素类型')
@@ -85,7 +88,92 @@ class AutomateDriver(object):
     def click(self, selector):
         """
         点击操作
+        ：:param selector
         """
         el = self.get_element(selector)
         el.click()
+        self.sleep(2)
+
+    def click_index(self, selector, index):
+        """
+        点击指定索引的元素
+        :param selector, index
+        """
+        el = self.get_element(selector)
+        Select(el).select_by_index(index)
+
+    def click_by_text(self, text):
+        """
+         通过链接文本单击元素
+        """
+        self.get_element('p'+text).click()
+
+    def execute_js(self, script):
+        """
+        执行JavaScript脚本
+
+        用法：
+        driver.js("window.scrollTo(200,1000);")
+        """
+        self.driver.execute_script(script)
+
+    def scroll_js(self, selector, number):
+        """
+        根据浏览器的不同操作纵向滚动条
+        number = 0 -----》回到最顶部
+               = 10000 -----》拉到最底部
+        """
+        if self.driver.name == 'chrome':
+            js = "var q=document.body.scrollTop= %d" % number
+            self.driver.execute_script(js)
+        else:
+            js = "var q=document.getElementById(%s).scrollTop= %d" % selector % number
+            self.driver.execute_script(js)
+
+    def elements_focus_js(self, selector):
+        """
+        聚焦元素，让页面直接跳到元素出现的位置
+        """
+        target = self.get_element(selector)
+        self.driver.execute_script("arguments[0].scrollIntoView();", target)
+
+    def get_attribute(self, selector, attribute):
+        """
+        获取元素属性的值，返回元素的属性
+        """
+        el = self.get_element(selector)
+        return el.get_attribute(attribute)
+
+    def get_text(self, selector):
+        """
+        获取元素的文本信息,返回元素的文本
+        """
+        el = self.get_element(selector)
+        return el.text
+
+    def get_display(self, selector):
+        """
+        获取要显示的元素，返回的结果为真或假。
+        """
+        el = self.get_element(selector)
+        return el.is_displayed()
+
+    def get_url_address(self):
+        """
+        获取当前页面的URL地址
+        """
+        return self.driver.current_url
+
+    def get_window_title(self):
+        """
+        获取当前窗口的标题
+        """
+        return self.driver.title
+
+    def accept_alert(self):
+        """
+        接受警告框
+        :return:
+        """
+        self.driver.switch_to.alert.accept()
 
