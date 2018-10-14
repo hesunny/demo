@@ -198,4 +198,13 @@ class AutomateDriver(object):
         """
         self.driver.implicitly_wait(second)
 
-    def
+    def switch_frame(self, reference, value):
+        """
+        reference是传入的参数，用来定位frame，可以传入id、name、index以及selenium的WebElement对象
+        switch_to.frame() 等同于原来的switch_to_frame()
+        """
+        if reference == 'element':
+            el = self.get_element(value)
+            self.driver.switch_to.frame(el)
+        elif reference == 'index':
+            self.driver.switch_to.frame(value)
