@@ -1,4 +1,5 @@
 # __author__ = 'Yang'
+# -*- coding:utf-8 -*-
 
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
@@ -7,7 +8,7 @@ import time
 
 class AutomateDriver(object):
     """
-        ·â×°Ò»¸öÒ³Ãæ»ùÀà£¬ÈÃËùÓĞÒ³Ãæ¼Ì³ĞÕâ¸ö»ùÀà
+        å°è£…ä¸€ä¸ªé¡µé¢åŸºç±»ï¼Œè®©æ‰€æœ‰é¡µé¢ç»§æ‰¿è¿™ä¸ªåŸºç±»
     """
 
     def __init__(self):
@@ -19,7 +20,7 @@ class AutomateDriver(object):
 
     def clear_cookies(self):
         """
-        Çå³ıÇı¶¯³õÊ¼»¯ºóµÄËùÓĞcookies
+        æ¸…é™¤é©±åŠ¨åˆå§‹åŒ–åçš„æ‰€æœ‰cookies
         """
         self.driver.delete_all_cookies()
 
@@ -44,9 +45,9 @@ class AutomateDriver(object):
 
     def get_element(self, selector):
         """
-        °ËÖÖ¶¨Î»ÔªËØ·½Ê½µÄ·â×°
+        å…«ç§å®šä½å…ƒç´ æ–¹å¼çš„å°è£…
 
-        selectorÍ¨¹ıÒ»¸ö´øÓĞ¡°i,xxx¡±µÄÀı×Ó´«µİ£¬·Ö¸î·ûÎª¡°£¬¡±
+        selectoré€šè¿‡ä¸€ä¸ªå¸¦æœ‰â€œi,xxxâ€çš„ä¾‹å­ä¼ é€’ï¼Œåˆ†å‰²ç¬¦ä¸ºâ€œï¼Œâ€
         :return:
             element
         """
@@ -74,12 +75,12 @@ class AutomateDriver(object):
         elif 'p' in selector_by or selector_by == 'partial_link_text':
             element = self.driver.find_element_by_partial_link_text(selector_value)
         else:
-            raise NameError('ÇëÊäÈëÓĞĞ§µÄÔªËØÀàĞÍ')
+            raise NameError('è¯·è¾“å…¥æœ‰æ•ˆçš„å…ƒç´ ç±»å‹')
         return element
 
     def input(self, selector, text):
         """
-        ²Ù×÷ÊäÈë¿ò
+        æ“ä½œè¾“å…¥æ¡†
         """
         el = self.get_element(selector)
         el .clear()
@@ -87,8 +88,8 @@ class AutomateDriver(object):
 
     def click(self, selector):
         """
-        µã»÷²Ù×÷
-        £º:param selector
+        ç‚¹å‡»æ“ä½œ
+        ï¼š:param selector
         """
         el = self.get_element(selector)
         el.click()
@@ -96,7 +97,7 @@ class AutomateDriver(object):
 
     def click_index(self, selector, index):
         """
-        µã»÷Ö¸¶¨Ë÷ÒıµÄÔªËØ
+        ç‚¹å‡»æŒ‡å®šç´¢å¼•çš„å…ƒç´ 
         :param selector, index
         """
         el = self.get_element(selector)
@@ -104,76 +105,97 @@ class AutomateDriver(object):
 
     def click_by_text(self, text):
         """
-         Í¨¹ıÁ´½ÓÎÄ±¾µ¥»÷ÔªËØ
+         é€šè¿‡é“¾æ¥æ–‡æœ¬å•å‡»å…ƒç´ 
         """
         self.get_element('p'+text).click()
 
     def execute_js(self, script):
         """
-        Ö´ĞĞJavaScript½Å±¾
+        æ‰§è¡ŒJavaScriptè„šæœ¬
 
-        ÓÃ·¨£º
+        ç”¨æ³•ï¼š
         driver.js("window.scrollTo(200,1000);")
         """
         self.driver.execute_script(script)
 
-    def scroll_js(self, selector, number):
+    def scroll_js(self, selector, number=10000):
         """
-        ¸ù¾İä¯ÀÀÆ÷µÄ²»Í¬²Ù×÷×İÏò¹ö¶¯Ìõ
-        number = 0 -----¡·»Øµ½×î¶¥²¿
-               = 10000 -----¡·À­µ½×îµ×²¿
+        æ ¹æ®æµè§ˆå™¨çš„ä¸åŒæ“ä½œçºµå‘æ»šåŠ¨æ¡
+        number = 0 -----ã€‹å›åˆ°æœ€é¡¶éƒ¨
+               = 10000 -----ã€‹æ‹‰åˆ°æœ€åº•éƒ¨
         """
         if self.driver.name == 'chrome':
             js = "var q=document.body.scrollTop= %d" % number
             self.driver.execute_script(js)
         else:
-            js = "var q=document.getElementById(%s).scrollTop= %d" % selector % number
+            js = "var q=document.getElementById(%s).scrollTop= %d" % (selector,number)
             self.driver.execute_script(js)
 
     def elements_focus_js(self, selector):
         """
-        ¾Û½¹ÔªËØ£¬ÈÃÒ³ÃæÖ±½ÓÌøµ½ÔªËØ³öÏÖµÄÎ»ÖÃ
+        èšç„¦å…ƒç´ ï¼Œè®©é¡µé¢ç›´æ¥è·³åˆ°å…ƒç´ å‡ºç°çš„ä½ç½®
         """
         target = self.get_element(selector)
         self.driver.execute_script("arguments[0].scrollIntoView();", target)
 
+    def submit(self, selector):
+        """
+        æäº¤æŒ‡å®šçš„ä¿¡æ¯
+
+        """
+        el = self.get_element(selector)
+        el.submit()
+
     def get_attribute(self, selector, attribute):
         """
-        »ñÈ¡ÔªËØÊôĞÔµÄÖµ£¬·µ»ØÔªËØµÄÊôĞÔ
+        è·å–å…ƒç´ å±æ€§çš„å€¼ï¼Œè¿”å›å…ƒç´ çš„å±æ€§
         """
         el = self.get_element(selector)
         return el.get_attribute(attribute)
 
     def get_text(self, selector):
         """
-        »ñÈ¡ÔªËØµÄÎÄ±¾ĞÅÏ¢,·µ»ØÔªËØµÄÎÄ±¾
+        è·å–å…ƒç´ çš„æ–‡æœ¬ä¿¡æ¯,è¿”å›å…ƒç´ çš„æ–‡æœ¬
         """
         el = self.get_element(selector)
         return el.text
 
     def get_display(self, selector):
         """
-        »ñÈ¡ÒªÏÔÊ¾µÄÔªËØ£¬·µ»ØµÄ½á¹ûÎªÕæ»ò¼Ù¡£
+        è·å–è¦æ˜¾ç¤ºçš„å…ƒç´ ï¼Œè¿”å›çš„ç»“æœä¸ºçœŸæˆ–å‡ã€‚
         """
         el = self.get_element(selector)
         return el.is_displayed()
 
     def get_url_address(self):
         """
-        »ñÈ¡µ±Ç°Ò³ÃæµÄURLµØÖ·
+        è·å–å½“å‰é¡µé¢çš„URLåœ°å€
         """
         return self.driver.current_url
 
     def get_window_title(self):
         """
-        »ñÈ¡µ±Ç°´°¿ÚµÄ±êÌâ
+        è·å–å½“å‰çª—å£çš„æ ‡é¢˜
         """
         return self.driver.title
 
     def accept_alert(self):
         """
-        ½ÓÊÜ¾¯¸æ¿ò
+        æ¥å—è­¦å‘Šæ¡†
         :return:
         """
         self.driver.switch_to.alert.accept()
 
+    def dismiss_alert(self):
+        """
+        è§£é™¤è­¦æŠ¥æ¡†
+        """
+        self.driver.switch_to.alert.dismiss()
+
+    def implicitly_wait(self, second):
+        """
+        éšå¼ç­‰å¾…é¡µé¢ä¸Šçš„æ‰€æœ‰å…ƒç´ 
+        """
+        self.driver.implicitly_wait(second)
+
+    def
