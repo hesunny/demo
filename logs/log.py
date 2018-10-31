@@ -23,4 +23,5 @@ class Logger(object):
         self.formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     def get_logger(self):
+        self.backup_count
 
