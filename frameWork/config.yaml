@@ -1,0 +1,18 @@
+# this is a yaml file
+
+testServer:
+    url: http://pm-debug2.dzsh.net
+
+user:
+    login_name: 13476528094
+    login_password: 123456
+
+log:
+    fileName: test.log
+    backupCount: 5
+    # 日志输出级别
+    consoleLevel: WARNING
+    fileLevel: DEBUG
+    # 日志输出格式
+    pattern: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+

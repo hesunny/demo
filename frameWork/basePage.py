@@ -153,6 +153,11 @@ class AutomateDriver(object):
         el = self.get_element(selector)
         return el.get_attribute(attribute)
 
+    def remove_attribute(self, selector, attribute):
+        # 用js去掉某个元素的某个属于
+        js = 'document.getElementById(%s).removeAttribute(%s);'%selector %attribute
+        self.driver.execute_script(js)
+
     def get_text(self, selector):
         """
         获取元素的文本信息,返回元素的文本
@@ -208,3 +213,5 @@ class AutomateDriver(object):
             self.driver.switch_to.frame(el)
         elif reference == 'index':
             self.driver.switch_to.frame(value)
+
+
