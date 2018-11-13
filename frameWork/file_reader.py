@@ -3,6 +3,11 @@
 # http://www.cnblogs.com/zidonghua/p/7430083.html#_label2
 import yaml
 import os
+from xlrd import open_workbook
+
+"""
+文件读取。YamlReader读取yaml文件，ExcelReader读取excel。
+"""
 
 
 class YamlReader:
@@ -22,3 +27,21 @@ class YamlReader:
             with open(self.yamlf, 'rb') as f:
                 self._data = list(yaml.safe_load_all(f))
         return self._data
+
+
+class SheetTypeError(Exception):
+    pass
+
+
+class ExcelReader:
+    """
+      读取excel文件中的内容。返回list。
+      """
+    def __init__(self, excel, sheet=0, title_line=True):
+        if os.path.exists(excel):
+            self.excel = excel
+        else:
+            raise FileNotFoundError('文件不存在！')
+        self.sheet = sheet
+        self.title_line = title_line
+        self._data = list()
