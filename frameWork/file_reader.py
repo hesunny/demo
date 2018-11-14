@@ -37,7 +37,7 @@ class ExcelReader:
     """
       读取excel文件中的内容。返回list。
       """
-    def __init__(self, excel, sheet=0, title_line=True):
+    def __init__(self, excel, sheet, title_line=True):
         if os.path.exists(excel):
             self.excel = excel
         else:
@@ -45,3 +45,46 @@ class ExcelReader:
         self.sheet = sheet
         self.title_line = title_line
         self._data = list()
+
+    @property
+    def data(self):
+        if not self._data:
+            workbook = open_workbook(self.excel)
+            print(type(self.sheet))
+            if type(self.sheet) not in [int, str]:
+                raise SheetTypeError('please pass in <type int> or <type str>, not{0}'.format(type(self.sheet)))
+            elif type == int:
+                s = workbook.sheet_by_index(self.sheet)
+            else:
+                s = workbook.sheet_by_name(self.sheet)
+
+            if self.title_line:
+                title = s.row_values(0)  # 首行为title
+                for col in range(1, s.nrows):
+                    # 依次遍历其余行，与首行组成dict, 加入到self._data中
+                    self._data.append(dict(zip(title, s.row_values(col))))
+            else:
+                for col in range(0, s.nrows):
+                    # 遍历所有行，加到self._data中
+                    self._data.append(s.row_values(col))
+        return self._data
+
+
+if __name__ == '__main__':
+    y = 'F:/Python test/pm_dzsh_debug/frameWork/config.yaml'
+    reader = YamlReader(y)
+    print(reader.data)
+
+    e = 'F:/Python test/pm_dzsh_debug/frameWork/config.xls'
+    reader_e = ExcelReader(e, sheet='config', title_line=False)
+    print(reader_e.data)
+    a = 'F:/Python test/pm_dzsh_debug/frameWork/config.xls'
+    reader_a = ExcelReader(a, sheet='config', title_line=True)
+    print(reader_a.data)
+
+
+
+
+
+
+
