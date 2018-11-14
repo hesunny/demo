@@ -6,7 +6,7 @@ from selenium.webdriver.support.select import Select
 import time
 
 
-class AutomateDriver(object):
+class BasePage(object):
     """
         封装一个页面基类，让所有页面继承这个基类
     """

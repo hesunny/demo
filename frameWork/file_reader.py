@@ -11,9 +11,9 @@ from xlrd import open_workbook
 
 
 class YamlReader:
-    def __init__(self, yamlf):
-        if os.path.exists(yamlf):
-            self.yamlf = yamlf
+    def __init__(self, yaml):
+        if os.path.exists(yaml):
+            self.yaml = yaml
         else:
             raise FileNotFoundError('文件不存在！')
         self._data = None
@@ -24,7 +24,7 @@ class YamlReader:
             如果是第一次调用data，读取yaml文件，否则直接返回之前保存的数据
         """
         if not self._data:
-            with open(self.yamlf, 'rb') as f:
+            with open(self.yaml, 'rb') as f:
                 self._data = list(yaml.safe_load_all(f))
         return self._data
 
@@ -71,14 +71,14 @@ class ExcelReader:
 
 
 if __name__ == '__main__':
-    y = 'F:/Python test/pm_dzsh_debug/frameWork/config.yaml'
+    y = 'F:/Python test/pm_dzsh_debug/data/config.yaml'
     reader = YamlReader(y)
     print(reader.data)
 
-    e = 'F:/Python test/pm_dzsh_debug/frameWork/config.xls'
+    e = 'F:/Python test/pm_dzsh_debug/data/config.xls'
     reader_e = ExcelReader(e, sheet='config', title_line=False)
     print(reader_e.data)
-    a = 'F:/Python test/pm_dzsh_debug/frameWork/config.xls'
+    a = 'F:/Python test/pm_dzsh_debug/data/config.xls'
     reader_a = ExcelReader(a, sheet='config', title_line=True)
     print(reader_a.data)
 
