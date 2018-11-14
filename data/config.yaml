@@ -4,8 +4,8 @@ testServer:
     url: http://pm-debug2.dzsh.net
 
 user:
-    login_name: 13476528094
-    login_password: 123456
+    login_name: 134765280**
+    login_password: *******
 
 log:
     fileName: test.log
