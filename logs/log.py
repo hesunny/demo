@@ -1,11 +1,14 @@
 # __author__ = 'Yang'
 # -*- coding:utf-8 -*-
+
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
+from frameWork.config import LOG_PATH, Config
+
 
 """
-日志类。通过通过读取配置文件，定义日志级别，日志文件名，日志格式等
+日志类。通过读取配置文件，定义日志级别，日志文件名，日志格式等
 需导入 logger 模块
 """
 
@@ -26,6 +29,28 @@ class Logger(object):
         self.formatter = logging.Formatter(pattern)
 
     def get_logger(self):
+        """
+        在logger中添加日志句柄并返回，如果logger中已有句柄，则直接返回
+                                """
+        if not self.logger.handlers:  # 避免重复日志
+            console_handler = logging.StreamHandler()
+            console_handler.setFormatter(self.formatter)
+            console_handler.setLevel(self.console_output_level)
+            self.logger.addHandler(console_handler)
+
+            # 每天重新创建一个日志文件，最多保留backup_count 份
+            file_handler = TimedRotatingFileHandler(filename=os.path.join(LOG_PATH),
+                                                    when='D', interval='1', backupCount=self.backup_count,
+                                                    delay=True, encoding='utf-8')
+            file_handler.setFormatter(self.formatter)
+            file_handler.setLevel(self.file_output_lever)
+            self.logger.addHandler(file_handler)
+        return self.logger
+
+
+logger = Logger().get_logger()
+
+
 
 
 
