@@ -10,12 +10,9 @@ from pageObjects.login import LoginPage
 class TestLogin(unittest.TestCase):
     URL = Config().get('url')
     user_name = Config().get('login_name')
-    print(user_name)
     password = Config().get('login_password')
-    print(password)
     yaml = DATA_PATH + '/config.yaml'
 
-    driver.get(self.URL)
     def test_01_login(self):
         user_login = LoginPage()
         user_login.type_search_element(self.user_name, self.password)

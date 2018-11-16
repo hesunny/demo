@@ -8,6 +8,7 @@ from data.config import Config, DATA_PATH
 from data.file_reader import YamlReader
 from selenium.webdriver.support.wait import WebDriverWait
 
+
 class BasePage(object):
     """
         封装一个页面基类，让所有页面继承这个基类
@@ -20,7 +21,7 @@ class BasePage(object):
     def __init__(self):
         chrome_url = 'C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe'
         driver = webdriver.Chrome(chrome_url)
-        self.wait = WebDriverWait(self.driver, 10, 0.5)
+        driver.get(self.URL)
         try:
             self.driver = driver
         except Exception:
