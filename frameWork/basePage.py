@@ -4,15 +4,23 @@
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
 import time
-
+from data.config import Config, DATA_PATH
+from data.file_reader import YamlReader
+from selenium.webdriver.support.wait import WebDriverWait
 
 class BasePage(object):
     """
         封装一个页面基类，让所有页面继承这个基类
     """
+    URL = Config().get('url')
+    user_name = Config().get('login_name')
+    password = Config().get('login_password')
+    yaml = DATA_PATH + '/config.yaml'
 
     def __init__(self):
-        driver = webdriver.Chrome()
+        chrome_url = 'C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe'
+        driver = webdriver.Chrome(chrome_url)
+        self.wait = WebDriverWait(self.driver, 10, 0.5)
         try:
             self.driver = driver
         except Exception:
@@ -52,11 +60,11 @@ class BasePage(object):
             element
         """
 
-        if ',' not in selector:
+        if '=>' not in selector:
             return self.driver.find_element_by_xpath(selector)
 
-        selector_by = selector.split(',')[0]
-        selector_value = selector.split(',')[1]
+        selector_by = selector.split('=>')[0]
+        selector_value = selector.split('=>')[1]
 
         if 'i' in selector_by or selector_by == 'id':
             element = self.driver.find_element_by_id(selector_value)

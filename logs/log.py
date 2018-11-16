@@ -4,7 +4,7 @@
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from frameWork.config import LOG_PATH, Config
+from data.config import LOG_PATH, Config
 
 
 """
