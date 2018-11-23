@@ -14,7 +14,7 @@ from data.config import LOG_PATH, Config
 
 
 class Logger(object):
-    def __init__(self, logger_name='frameWork'):
+    def __init__(self, logger_name):
         self.logger = logging.getLogger(logger_name)
         logging.root.setLevel(logging.NOTSET)
         c = Config().get('log')
@@ -39,16 +39,14 @@ class Logger(object):
             self.logger.addHandler(console_handler)
 
             # 每天重新创建一个日志文件，最多保留backup_count 份
-            file_handler = TimedRotatingFileHandler(filename=os.path.join(LOG_PATH),
-                                                    when='D', interval='1', backupCount=self.backup_count,
-                                                    delay=True, encoding='utf-8')
+            file_handler = TimedRotatingFileHandler(filename=os.path.join(LOG_PATH), when='D', interval=1,
+                                                    backupCount=self.backup_count, delay=True, encoding='utf-8')
             file_handler.setFormatter(self.formatter)
             file_handler.setLevel(self.file_output_lever)
             self.logger.addHandler(file_handler)
         return self.logger
 
 
-logger = Logger().get_logger()
 
 
 

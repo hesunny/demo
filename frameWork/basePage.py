@@ -2,11 +2,16 @@
 # -*- coding:utf-8 -*-
 
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 import time
 from data.config import Config, DATA_PATH
-from data.file_reader import YamlReader
-from selenium.webdriver.support.wait import WebDriverWait
+from logs.log import Logger
+
+logger = Logger(logger_name='BasePage').get_logger()
 
 
 class BasePage(object):
@@ -21,7 +26,10 @@ class BasePage(object):
     def __init__(self):
         chrome_url = 'C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe'
         driver = webdriver.Chrome(chrome_url)
+        self.wait = WebDriverWait(driver, 10, 0.5)
+        driver.maximize_window()
         driver.get(self.URL)
+        logger.info('open browser %s' % self.URL)
         try:
             self.driver = driver
         except Exception:
@@ -32,25 +40,56 @@ class BasePage(object):
         清除驱动初始化后的所有cookies
         """
         self.driver.delete_all_cookies()
+        logger.info('clear cookies!!')
 
     def refresh_browser(self):
         self.driver.refresh()
+        logger.info("refresh the browser......")
+
+
+# 浏览器前进操作
+    def forward(self):
+        self.driver.forward()
+        logger.info("Click forward on current page.")
+
+# 浏览器后退操作
+    def back(self):
+        self.driver.back()
+        logger.info("Click back on current page.")
 
     def maximize_window(self):
         self.driver.maximize_window()
 
-    def get_url(self, url='http://pm-debug2.dzsh.net'):
-        self.driver.get(url)
+    def get_url(self, browser_url):
+        self.driver.get(browser_url)
 
     def quit_browser(self):
         self.quit_browser()
 
     def close_browser(self):
         self.driver.close()
+        logger.info('close browser...')
 
     @staticmethod
     def sleep(seconds):
         time.sleep(seconds)
+
+    def get_windows_img(self):
+
+        """
+        在这里把file_path这个参数写死，直接保存到我们项目根目录的一个文件夹.\screenshots下
+        """
+
+        file_path = 'F:/Python test/pm_dzsh_debug/screenshots/'
+        # 格式化时间
+        date = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
+        screen_name = file_path + date + '.png'
+        try:
+            self.driver.get_screenshot_as_file(screen_name)
+            logger.info("Had take screenshot and save to folder : /screenshots")
+        except NameError as e:
+            logger.error("failed to take screenshot! %s" % e)
+            self.get_windows_img()
 
     def get_element(self, selector):
         """
@@ -67,24 +106,36 @@ class BasePage(object):
         selector_by = selector.split('=>')[0]
         selector_value = selector.split('=>')[1]
 
-        if 'i' in selector_by or selector_by == 'id':
-            element = self.driver.find_element_by_id(selector_value)
-        elif 'x' in selector_by or selector_by == 'xpath':
-            element = self.driver.find_element_by_xpath(selector_value)
-        elif 'n' in selector_by or selector_by == 'name':
-            element = self.driver.find_element_by_name(selector_value)
-        elif 'c' in selector_by or selector_by == 'class_name':
-            element = self.driver.find_element_by_class_name(selector_value)
-        elif 's' in selector_by or selector_by == 'css_selector':
-            element = self.driver.find_element_by_css_selector(selector_value)
-        elif 't' in selector_by or selector_by == 'tag_name':
-            element = self.driver.find_element_by_tag_name(selector_value)
-        elif 'l' in selector_by or selector_by == 'link_text':
-            element = self.driver.find_element_by_link_text(selector_value)
-        elif 'p' in selector_by or selector_by == 'partial_link_text':
-            element = self.driver.find_element_by_partial_link_text(selector_value)
+        if selector_by == 'i' or selector_by == "id":
+            try:
+                element = self.wait.until(EC.visibility_of_element_located((By.ID, selector_value)))
+                logger.info("Had find the element \' %s \' successful"
+                            "by %s valid value: %s " % (element.text, selector_by, selector_value))
+            except NoSuchElementException as e:
+                logger.error("No Such Element Exception as %s" % e)
+                self.get_windows_img()
+        elif selector_by == 'n' or selector_by == 'name':
+            element = self.wait.until(EC.visibility_of_element_located((By.NAME, selector_value)))
+        elif selector_by == 'c' or selector_by == 'class_name':
+            element = self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, selector_value)))
+        elif selector_by == 'l' or selector_by == 'link_text':
+            element = self.wait.until(EC.visibility_of_element_located((By.LINK_TEXT, selector_value)))
+        elif selector_by == 'p' or selector_by == 'partial_link_text':
+            element = self.wait.until(EC.visibility_of_element_located((By.PARTIAL_LINK_TEXT, selector_value)))
+        elif selector_by == 't' or selector_by == 'tag_name':
+            element = self.wait.until(EC.visibility_of_element_located((By.TAG_NAME, selector_value)))
+        elif selector_by == 'x' or selector_by == 'xpath':
+            try:
+                element = self.wait.until(EC.visibility_of_element_located((By.XPATH, selector_value)))
+                logger.info("Had find the element \' %s \' successful"
+                            "by %s valid value: %s" % (element.text, selector_by, selector_value))
+            except NoSuchElementException as e:
+                logger.error("No Such Element Exception as %s" % e)
+                self.get_windows_img()
+        elif selector_by == 's' or selector_by == 'css_selector':
+            element = self.wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, selector_value)))
         else:
-            raise NameError('请输入有效的元素类型')
+            raise NameError('Please enter a valid type of targeting elements.')
         return element
 
     def input(self, selector, text):
@@ -101,8 +152,10 @@ class BasePage(object):
         ：:param selector
         """
         el = self.get_element(selector)
+        self.get_windows_img()
         el.click()
         self.sleep(2)
+
 
     def click_index(self, selector, index):
         """

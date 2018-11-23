@@ -10,6 +10,7 @@ class LoginPage(BasePage):
     input_username = "name=>mobile_number"
     input_password = "name=>password"
     search_button_login = "xpath=>//button[contains(text(), '登录')]"
+    logout = "xpath=>//span[contains(@onclick,'logout')]"
 
     def type_search_element(self, username, password):
         self.input(self.input_username, username)
@@ -19,3 +20,6 @@ class LoginPage(BasePage):
         self.click(self.search_button_login)
         self.sleep(3)
 
+    def click_logout(self):
+        self.click(self.logout)
+        self.sleep(2)

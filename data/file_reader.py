@@ -50,7 +50,7 @@ class ExcelReader:
     def data(self):
         if not self._data:
             workbook = open_workbook(self.excel)
-            print(type(self.sheet))
+
             if type(self.sheet) not in [int, str]:
                 raise SheetTypeError('please pass in <type int> or <type str>, not{0}'.format(type(self.sheet)))
             elif type == int:
@@ -59,10 +59,11 @@ class ExcelReader:
                 s = workbook.sheet_by_name(self.sheet)
 
             if self.title_line:
-                title = s.row_values(0)  # 首行为title
+                title = s.row_values(0)   # 首行为title
+
                 for col in range(1, s.nrows):
-                    # 依次遍历其余行，与首行组成dict, 加入到self._data中
                     self._data.append(dict(zip(title, s.row_values(col))))
+                    # 依次遍历其余行，与首行组成dict, 加入到self._data中
             else:
                 for col in range(0, s.nrows):
                     # 遍历所有行，加到self._data中
@@ -71,20 +72,13 @@ class ExcelReader:
 
 
 if __name__ == '__main__':
-    y = 'F:/Python test/pm_dzsh_debug/data/config.yaml'
-    reader = YamlReader(y)
-    print(reader.data)
+    # y = 'F:/Python test/pm_dzsh_debug/data/config.yaml'
+    # reader = YamlReader(y)
+    # print(reader.data)
 
-    e = 'F:/Python test/pm_dzsh_debug/data/config.xls'
-    reader_e = ExcelReader(e, sheet='config', title_line=False)
-    print(reader_e.data)
+    # e = 'F:/Python test/pm_dzsh_debug/data/config.xls'
+    # reader_e = ExcelReader(e, sheet='login', title_line=False)
+    # print(reader_e.data)
     a = 'F:/Python test/pm_dzsh_debug/data/config.xls'
-    reader_a = ExcelReader(a, sheet='config', title_line=True)
+    reader_a = ExcelReader(a, sheet='login', title_line=True)
     print(reader_a.data)
-
-
-
-
-
-
-
