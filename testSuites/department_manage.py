@@ -43,11 +43,23 @@ class TestDepartmentManage(unittest.TestCase):
         except Exception as e:
             print("test failed as %s" % e, message)
         add_department_page.click_pop_up()
+        add_department_page.refresh_browser()
 
     def test_b02_change_department(self):
         add_department_page = DepartmentPage(self.driver)
         time.sleep(2)
-        add_department_page.click_department_manager()
+        add_department_page.refresh_browser()
+        add_department_page.click_tree_last_element()
+        add_department_page.chang_department()
+        add_department_page.type_search_element(DEPARTMENT_NAME + '1', '此为测试部门，可以随意删除')
+        add_department_page.click_save_button()
+        message = add_department_page.message_text()
+        try:
+            assert message == '保存成功'
+            print("test pass--->test4_修改部门")
+        except Exception as e:
+            print("test failed as %s" % e, message)
+        add_department_page.click_pop_up()
 
 
 if __name__ == '__main__':

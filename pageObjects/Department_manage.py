@@ -37,7 +37,7 @@ class DepartmentPage(BasePage):
 
     # 获取结构树最后一个元素
     def click_tree_last_element(self):
-        self.driver.find_elements_by_xpath(self.tree_list, -2)
+        self.click_elements(self.tree_list, -2)
         self.sleep(2)
 
     # 点击修改按钮

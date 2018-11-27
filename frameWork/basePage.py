@@ -126,6 +126,49 @@ class BasePage(object):
             raise NameError('Please enter a valid type of targeting elements.')
         return element
 
+    def get_elements(self, selector):
+        """
+         获取多个元素，返回元素列表
+    """
+        elements = ''
+        if "=>" not in selector:
+            return self.wait.until(EC.visibility_of_all_elements_located((By.XPATH, selector)))
+            # return self.driver.find_element_by_xpath(selector)
+        selector_by = selector.split("=>")[0]
+        selector_value = selector.split("=>")[1]
+
+        if selector_by == 'i' or selector_by == "id":
+            try:
+                elements = self.wait.until(EC.visibility_of_all_elements_located((By.ID, selector_value)))
+                logger.info("Had find the elements successful"
+                            "by %s valid value: %s " % (selector_by, selector_value))
+            except NoSuchElementException as e:
+                logger.error("No Such Element Exception as %s" % e)
+                self.get_windows_img()
+        elif selector_by == 'n' or selector_by == 'name':
+            elements = self.wait.until(EC.visibility_of_all_elements_located((By.NAME, selector_value)))
+        elif selector_by == 'c' or selector_by == 'class_name':
+            elements = self.wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, selector_value)))
+        elif selector_by == 'l' or selector_by == 'link_text':
+            elements = self.wait.until(EC.visibility_of_all_elements_located((By.LINK_TEXT, selector_value)))
+        elif selector_by == 'p' or selector_by == 'partial_link_text':
+            elements = self.wait.until(EC.visibility_of_all_elements_located((By.PARTIAL_LINK_TEXT, selector_value)))
+        elif selector_by == 't' or selector_by == 'tag_name':
+            elements = self.wait.until(EC.visibility_of_all_elements_located((By.TAG_NAME, selector_value)))
+        elif selector_by == 'x' or selector_by == 'xpath':
+            try:
+                elements = self.wait.until(EC.visibility_of_all_elements_located((By.XPATH, selector_value)))
+                logger.info("Had find the element successful"
+                            "by %s valid value: %s" % (selector_by, selector_value))
+            except NoSuchElementException as e:
+                logger.error("No Such Element Exception as %s" % e)
+                self.get_windows_img()
+        elif selector_by == 's' or selector_by == 'css_selector':
+            elements = self.wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, selector_value)))
+        else:
+            raise NameError('Please enter a valid type of targeting elements.')
+        return elements
+
     def input(self, selector, text):
         """
             操作输入框
@@ -142,6 +185,17 @@ class BasePage(object):
         el = self.get_element(selector)
         el.click()
         self.sleep(2)
+
+    def click_elements(self, selector, index):
+        """获取元素类别，根据索引点击元素"""
+        elements = self.get_elements(selector)
+        elements_index = elements[index]
+        try:
+            elements_index.click()
+            self.sleep(2)
+            logger.info("then element clicked. ")
+        except NameError as e:
+            logger.error("failed to click the element as %s" % e)
 
     def click_index(self, selector, index):
         """
