@@ -1,29 +1,30 @@
 # -*- coding:utf-8 -*-
 
 import unittest
+from frameWork.browser_engine import BrowserEngine
 from data.config import Config, DATA_PATH
-from pageObjects.login import LoginPage
-
-
-driver = LoginPage()
+from pageObjects.login_page import LoginPage
 
 
 class TestLogin(unittest.TestCase):
-    URL = Config().get('url')
-    user_name = Config().get('login_name')
-    password = Config().get('login_password')
-    yaml = DATA_PATH + '/config.yaml'
+    user_name = Config().get('login_name2')
+    password = Config().get('login_password2')
 
-    def test_01_login(self):
-        driver.type_search_element(self.user_name, self.password)
-        driver.click_button_login()
-        driver.click_logout()
+    @classmethod
+    def setUpClass(cls):
+        """
+        测试固件的setUp()的代码，主要是测试的前提准备工作
+        :return:
+        """
+        browse = BrowserEngine(cls)
+        cls.driver = browse.open_browser(cls)
 
-    def test_02_logout(self):
-
-        driver.type_search_element(self.user_name, self.password)
-        driver.click_button_login()
-        driver.click_logout()
+    def test_A01_login_out(self):
+        login = LoginPage(self.driver)
+        login.sleep(3)
+        login.click_logout()
+        login.type_search_element(self.user_name, self.password)
+        login.click_button_login()
 
 
 if __name__ == '__main__':

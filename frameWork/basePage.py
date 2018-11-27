@@ -1,14 +1,12 @@
 # __author__ = 'Yang'
 # -*- coding:utf-8 -*-
 
-from selenium import webdriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 import time
-from data.config import Config, DATA_PATH
 from logs.log import Logger
 
 logger = Logger(logger_name='BasePage').get_logger()
@@ -18,22 +16,11 @@ class BasePage(object):
     """
         封装一个页面基类，让所有页面继承这个基类
     """
-    URL = Config().get('url')
-    user_name = Config().get('login_name')
-    password = Config().get('login_password')
-    yaml = DATA_PATH + '/config.yaml'
 
-    def __init__(self):
-        chrome_url = 'C:\Program Files (x86)\Google\Chrome\Application\chromedriver.exe'
-        driver = webdriver.Chrome(chrome_url)
-        self.wait = WebDriverWait(driver, 10, 0.5)
-        driver.maximize_window()
-        driver.get(self.URL)
-        logger.info('open browser %s' % self.URL)
-        try:
-            self.driver = driver
-        except Exception:
-            raise NameError('Chrome not found!')
+    # 初始化driver
+    def __init__(self, driver):
+        self.driver = driver
+        self.wait = WebDriverWait(self.driver, 10, 0.5)
 
     def clear_cookies(self):
         """
@@ -57,15 +44,15 @@ class BasePage(object):
         self.driver.back()
         logger.info("Click back on current page.")
 
+# 最大化浏览器
     def maximize_window(self):
         self.driver.maximize_window()
 
+# 获取地址
     def get_url(self, browser_url):
         self.driver.get(browser_url)
 
-    def quit_browser(self):
-        self.quit_browser()
-
+# 关闭浏览器
     def close_browser(self):
         self.driver.close()
         logger.info('close browser...')
@@ -74,6 +61,7 @@ class BasePage(object):
     def sleep(seconds):
         time.sleep(seconds)
 
+# 截图
     def get_windows_img(self):
 
         """
@@ -91,6 +79,7 @@ class BasePage(object):
             logger.error("failed to take screenshot! %s" % e)
             self.get_windows_img()
 
+# 定位元素
     def get_element(self, selector):
         """
         八种定位元素方式的封装
@@ -98,19 +87,19 @@ class BasePage(object):
         selector通过一个带有“i,xxx”的例子传递，分割符为“，”
         :return:
             element
-        """
 
-        if '=>' not in selector:
-            return self.driver.find_element_by_xpath(selector)
-
-        selector_by = selector.split('=>')[0]
-        selector_value = selector.split('=>')[1]
+        这个地方是根据 = > 来切割字符串 """
+        element = ''
+        if "=>" not in selector:
+            return self.wait.until(EC.visibility_of_element_located((By.XPATH, selector)))
+            # return self.driver.find_element_by_xpath(selector)
+        selector_by = selector.split("=>")[0]
+        selector_value = selector.split("=>")[1]
 
         if selector_by == 'i' or selector_by == "id":
             try:
                 element = self.wait.until(EC.visibility_of_element_located((By.ID, selector_value)))
-                logger.info("Had find the element \' %s \' successful"
-                            "by %s valid value: %s " % (element.text, selector_by, selector_value))
+                logger.info("Had find the element \' %s \' successful" % selector_value)
             except NoSuchElementException as e:
                 logger.error("No Such Element Exception as %s" % e)
                 self.get_windows_img()
@@ -127,8 +116,7 @@ class BasePage(object):
         elif selector_by == 'x' or selector_by == 'xpath':
             try:
                 element = self.wait.until(EC.visibility_of_element_located((By.XPATH, selector_value)))
-                logger.info("Had find the element \' %s \' successful"
-                            "by %s valid value: %s" % (element.text, selector_by, selector_value))
+                logger.info("Had find the element \' %s \' successful" % selector_value)
             except NoSuchElementException as e:
                 logger.error("No Such Element Exception as %s" % e)
                 self.get_windows_img()
@@ -140,11 +128,11 @@ class BasePage(object):
 
     def input(self, selector, text):
         """
-        操作输入框
-        """
+            操作输入框
+            """
         el = self.get_element(selector)
-        el .clear()
-        el .send_keys(text)
+        el.clear()
+        el.send_keys(text)
 
     def click(self, selector):
         """
@@ -152,10 +140,8 @@ class BasePage(object):
         ：:param selector
         """
         el = self.get_element(selector)
-        self.get_windows_img()
         el.click()
         self.sleep(2)
-
 
     def click_index(self, selector, index):
         """
