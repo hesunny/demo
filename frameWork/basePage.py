@@ -31,6 +31,7 @@ class BasePage(object):
 
     def refresh_browser(self):
         self.driver.refresh()
+        self.sleep(5)
         logger.info("refresh the browser......")
 
 
@@ -140,8 +141,7 @@ class BasePage(object):
         if selector_by == 'i' or selector_by == "id":
             try:
                 elements = self.wait.until(EC.visibility_of_all_elements_located((By.ID, selector_value)))
-                logger.info("Had find the elements successful"
-                            "by %s valid value: %s " % (selector_by, selector_value))
+                logger.info("Had find the elements \' %s \' successful" % selector_value)
             except NoSuchElementException as e:
                 logger.error("No Such Element Exception as %s" % e)
                 self.get_windows_img()
@@ -158,8 +158,7 @@ class BasePage(object):
         elif selector_by == 'x' or selector_by == 'xpath':
             try:
                 elements = self.wait.until(EC.visibility_of_all_elements_located((By.XPATH, selector_value)))
-                logger.info("Had find the element successful"
-                            "by %s valid value: %s" % (selector_by, selector_value))
+                logger.info("Had find the elements \' %s \' successful" % selector_value)
             except NoSuchElementException as e:
                 logger.error("No Such Element Exception as %s" % e)
                 self.get_windows_img()
@@ -315,5 +314,9 @@ class BasePage(object):
             self.driver.switch_to.frame(el)
         elif reference == 'index':
             self.driver.switch_to.frame(value)
+
+    def get_all_handles(self):
+        handles = self.driver.window_handles
+        return handles
 
 

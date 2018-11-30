@@ -21,13 +21,13 @@ class TestDepartmentManage(unittest.TestCase):
         browse = BrowserEngine(cls)
         cls.driver = browse.open_browser(cls)
 
-    @classmethod
-    def tearDownClass(cls):
-        """
-        测试结束后的操作，这里基本上都是关闭浏览器
-        :return:
-        """
-        cls.driver.quit()
+    # @classmethod
+    # def tearDownClass(cls):
+    #     """
+    #     测试结束后的操作，这里基本上都是关闭浏览器
+    #     :return:
+    #     """
+    #     cls.driver.quit()
 
     def test_b01_add_department(self):
         add_department_page = DepartmentPage(self.driver)
@@ -36,6 +36,7 @@ class TestDepartmentManage(unittest.TestCase):
         add_department_page.click_add_department()
         add_department_page.type_search_element(DEPARTMENT_NAME, '此为测试部门，可以随意删除')
         add_department_page.click_save_button()
+
         message = add_department_page.message_text()
         try:
             assert message == '保存成功'
@@ -45,6 +46,7 @@ class TestDepartmentManage(unittest.TestCase):
         add_department_page.click_pop_up()
         add_department_page.refresh_browser()
 
+    @unittest.case.skip("跳过此用例")
     def test_b02_change_department(self):
         add_department_page = DepartmentPage(self.driver)
         time.sleep(2)

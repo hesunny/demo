@@ -24,6 +24,9 @@ class DepartmentPage(BasePage):
     pop_up_text = "xpath=>//div[contains(@class, 'layui-layer-content')]"  # 弹框提示内容
     ok_pop_up = "xpath=>//a[contains(text(),'确定')]"   # 确定
 
+    # 弹出
+    div_popup_window = "xpath=>//div[@id='layui-layer12']"
+
     # 点击部门管理菜单
     def click_department_manager(self):
         self.click(self.departmentManager)
@@ -37,7 +40,9 @@ class DepartmentPage(BasePage):
 
     # 获取结构树最后一个元素
     def click_tree_last_element(self):
-        self.click_elements(self.tree_list, -2)
+        a = self.get_elements(self.tree_list)
+        print(a)
+        self.click_elements(self.tree_list, 1)
         self.sleep(2)
 
     # 点击修改按钮

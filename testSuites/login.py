@@ -2,7 +2,7 @@
 
 import unittest
 from frameWork.browser_engine import BrowserEngine
-from data.config import Config, DATA_PATH
+from data.config import Config
 from pageObjects.login_page import LoginPage
 
 
